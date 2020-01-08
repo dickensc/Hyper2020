@@ -41,6 +41,8 @@
 ```
 
 ## Blocking Predicates
+
+## Rule Pruning
  
  ## Original HyPER System
 
