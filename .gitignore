@@ -26,3 +26,7 @@ dependency-reduced-pom.xml
 out.txt
 out.err
 inferred-predicates/
+*.iml
+
+# intellij metadata #
+.idea
