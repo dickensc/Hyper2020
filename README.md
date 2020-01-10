@@ -1,4 +1,4 @@
-# HyPER2019
+# HyPER2020
  Reworking of the Hyper Recommender system.
  
  The original HyPER recommender system made design decisions that were necessary for scalability with the PSL version being used in 2015. 
