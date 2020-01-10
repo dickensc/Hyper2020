@@ -14,7 +14,6 @@ predicates:
     sim_mf_euclidean_items/2: closed
     avg_user_rating/1: closed
     avg_item_rating/1: closed
-    rated/2: closed
     sgd_rating/2: closed
     bpmf_rating/2: closed
     item_pearson_rating/2: closed
@@ -39,7 +38,6 @@ observations:
     avg_user_rating: ../data/yelp/0/eval/avg_user_rating_obs.txt
     avg_item_rating: ../data/yelp/0/eval/avg_item_rating_obs.txt
 
-    rated: ../data/yelp/0/eval/rated_obs.txt
     rating: ../data/yelp/0/eval/rating_obs.txt
     sgd_rating: ../data/yelp/0/eval/sgd_rating_obs.txt
     bpmf_rating: ../data/yelp/0/eval/bpmf_rating_obs.txt
