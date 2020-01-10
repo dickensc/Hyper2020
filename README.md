@@ -1,4 +1,7 @@
 # HyPER2020
+
+./run.sh will run examples passed , go through all splits, and for each split will run GPP, uniform, linear, quadratic, and original/mixture, block.
+
  Reworking of the Hyper Recommender system.
  
  The original HyPER recommender system made design decisions that were necessary for scalability with the PSL version being used in 2015. 
@@ -41,6 +44,9 @@
 ```
 
 ## Blocking Predicates
+
+Linear runs faster. 
+
 
 ## Rule Pruning
  
