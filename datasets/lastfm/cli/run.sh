@@ -15,7 +15,7 @@ readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statis
 
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
-WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='-l org.linqs.psl.application.learning.weight.'
+WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='-l org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
 
 readonly RULETYPES='-linear -orignal -quadratic'
 
