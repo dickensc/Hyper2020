@@ -18,36 +18,38 @@ predicates:
     bpmf_rating/2: closed
     item_pearson_rating/2: closed
     rating_prior/1: closed
+    rated/2: closed
     rating/2: open
 
 observations:
-    user: ../data/lastfm/1/learn/user_obs.txt
-    item: ../data/lastfm/1/learn/item_obs.txt
-    users_are_friends: ../data/lastfm/1/learn/users_are_friends_obs.txt
-    sim_content_items_jaccard: ../data/lastfm/1/learn/sim_content_items_jaccard_obs.txt
+    user: ../data/lastfm/0/learn/user_obs.txt
+    item: ../data/lastfm/0/learn/item_obs.txt
+    users_are_friends: ../data/lastfm/0/learn/users_are_friends_obs.txt
+    sim_content_items_jaccard: ../data/lastfm/0/learn/sim_content_items_jaccard_obs.txt
 
-    sim_pearson_items: ../data/lastfm/1/learn/sim_pearson_items_obs.txt
-    sim_cosine_items: ../data/lastfm/1/learn/sim_cosine_items_obs.txt
-    sim_adjcos_items:  ../data/lastfm/1/learn/sim_adjcos_items_obs.txt
-    sim_pearson_users: ../data/lastfm/1/learn/sim_pearson_users_obs.txt
-    sim_cosine_users: ../data/lastfm/1/learn/sim_cosine_users_obs.txt
-    sim_mf_cosine_users: ../data/lastfm/1/learn/sim_mf_cosine_users_obs.txt
-    sim_mf_euclidean_users: ../data/lastfm/1/learn/sim_mf_euclidean_users_obs.txt
-    sim_mf_cosine_items: ../data/lastfm/1/learn/sim_mf_cosine_items_obs.txt
-    sim_mf_euclidean_items: ../data/lastfm/1/learn/sim_mf_euclidean_items_obs.txt
+    sim_pearson_items: ../data/lastfm/0/learn/sim_pearson_items_obs.txt
+    sim_cosine_items: ../data/lastfm/0/learn/sim_cosine_items_obs.txt
+    sim_adjcos_items:  ../data/lastfm/0/learn/sim_adjcos_items_obs.txt
+    sim_pearson_users: ../data/lastfm/0/learn/sim_pearson_users_obs.txt
+    sim_cosine_users: ../data/lastfm/0/learn/sim_cosine_users_obs.txt
+    sim_mf_cosine_users: ../data/lastfm/0/learn/sim_mf_cosine_users_obs.txt
+    sim_mf_euclidean_users: ../data/lastfm/0/learn/sim_mf_euclidean_users_obs.txt
+    sim_mf_cosine_items: ../data/lastfm/0/learn/sim_mf_cosine_items_obs.txt
+    sim_mf_euclidean_items: ../data/lastfm/0/learn/sim_mf_euclidean_items_obs.txt
 
-    avg_user_rating: ../data/lastfm/1/learn/avg_user_rating_obs.txt
-    avg_item_rating: ../data/lastfm/1/learn/avg_item_rating_obs.txt
+    avg_user_rating: ../data/lastfm/0/learn/avg_user_rating_obs.txt
+    avg_item_rating: ../data/lastfm/0/learn/avg_item_rating_obs.txt
 
-    rating: ../data/lastfm/1/learn/rating_obs.txt
-    sgd_rating: ../data/lastfm/1/learn/sgd_rating_obs.txt
-    bpmf_rating: ../data/lastfm/1/learn/bpmf_rating_obs.txt
-    item_pearson_rating: ../data/lastfm/1/learn/item_pearson_rating_obs.txt
+    rating: ../data/lastfm/0/learn/rating_obs.txt
+    rated: ../data/lastfm/0/learn/rated_obs.txt
+    sgd_rating: ../data/lastfm/0/learn/sgd_rating_obs.txt
+    bpmf_rating: ../data/lastfm/0/learn/bpmf_rating_obs.txt
+    item_pearson_rating: ../data/lastfm/0/learn/item_pearson_rating_obs.txt
 
-    rating_prior: ../data/lastfm/1/learn/rating_prior_obs.txt
+    rating_prior: ../data/lastfm/0/learn/rating_prior_obs.txt
 
 targets:
-   rating: ../data/lastfm/1/learn/rating_targets.txt
+   rating: ../data/lastfm/0/learn/rating_targets.txt
 
 truth:
-   rating: ../data/lastfm/1/learn/rating_truth.txt
+   rating: ../data/lastfm/0/learn/rating_truth.txt

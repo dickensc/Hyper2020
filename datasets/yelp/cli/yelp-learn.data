@@ -18,6 +18,7 @@ predicates:
     bpmf_rating/2: closed
     item_pearson_rating/2: closed
     rating_prior/1: closed
+    rated/2: closed
     rating/2: open
 
 observations:
@@ -40,6 +41,7 @@ observations:
     avg_item_rating: ../data/yelp/0/learn/avg_item_rating_obs.txt
 
     rating: ../data/yelp/0/learn/rating_obs.txt
+    rated: ../data/yelp/0/learn/rated_obs.txt
     sgd_rating: ../data/yelp/0/learn/sgd_rating_obs.txt
     bpmf_rating: ../data/yelp/0/learn/bpmf_rating_obs.txt
     item_pearson_rating: ../data/yelp/0/learn/item_pearson_rating_obs.txt
