@@ -9,7 +9,7 @@ readonly NUM_FOLDS=5
 
 readonly STANDARD_PSL_OPTIONS='-D parallel.numthreads=1'
 
-readonly INFERENCE_METHODS='ti'
+readonly INFERENCE_METHODS='admm'
 
 readonly WEIGHT_LEARNING_METHODS='uniform gpp'
 
@@ -68,7 +68,7 @@ function run_example() {
 
     for ((fold=0; fold<"${nfolds}"; fold++)) do
       echo "Running ${exampleName} (#${fold}) -- ${method}."
-      outDir ="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
+      outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
       run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${options}"
     done
 }
