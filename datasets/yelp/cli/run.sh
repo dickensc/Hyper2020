@@ -4,7 +4,7 @@
 # These options are blind-passed to the CLI.
 # Ex: ./run.sh -D log4j.threshold=DEBUG
 
-readonly PSL_VERSION='2.2.1'
+readonly PSL_VERSION='2.3.0'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly FETCH_DATA_SCRIPT='../data/fetchData.sh'
 readonly BASE_NAME='yelp'
@@ -97,7 +97,7 @@ function runEvaluation() {
    echo "Running PSL Inference"
 
    echo "evalutaion options"
-   echo "$@"
+   echo "$3"
 
    if [[ "uniform" != "${wl_method}" ]]; then
      java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$3"

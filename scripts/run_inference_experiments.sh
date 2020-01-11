@@ -63,11 +63,12 @@ function run_example() {
 #    popd > /dev/null
 
     local nfolds=NUM_FOLDS
-    local outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
+    local outDir
     local options="${STANDARD_PSL_OPTIONS} ${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
 
     for ((fold=0; fold<"${nfolds}"; fold++)) do
       echo "Running ${exampleName} (#${fold}) -- ${method}."
+      outDir ="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
       run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${options}"
     done
 }
