@@ -36,5 +36,5 @@
 1.0  :  rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_content_items_jaccard(I1,I2) >> rating(U,I2)
 
 // Two-sided overall prior
-1.0 : user(U) & item(I) & rated(U,I) & rating_prior(c) >> rating(U,I)^2
-1.0 : user(I) & item(I) & rated(U,I) & rating(U,I) >> rating_prior(c)^2
+1.0 : constant(C) & user(U) & item(I) & rated(U,I) & rating_prior(C) >> rating(U,I)^2
+1.0 : constant(C) & user(I) & item(I) & rated(U,I) & rating(U,I) >> rating_prior(C)^2
