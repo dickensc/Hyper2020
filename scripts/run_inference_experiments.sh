@@ -5,7 +5,7 @@
 readonly THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly BASE_OUT_DIR="${THIS_DIR}/../results/inference"
 
-readonly NUM_RUNS=10
+readonly NUM_RUNS=1
 
 readonly STANDARD_PSL_OPTIONS='-D parallel.numthreads=1'
 
