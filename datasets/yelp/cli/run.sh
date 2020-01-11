@@ -87,7 +87,7 @@ function runEvaluation() {
       exit 70
    fi
 
-   mv "${BASE_NAME}-learned.psl" "../../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl"
+   mv "${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl"
 }
 
 function check_requirements() {
