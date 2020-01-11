@@ -7,18 +7,24 @@
 readonly PSL_VERSION='2.3.0-SNAPSHOT'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly FETCH_DATA_SCRIPT='../data/fetchData.sh'
-readonly BASE_NAME='lastfm'
+readonly BASE_NAME='yelp'
 
-readonly ADDITIONAL_PSL_OPTIONS='-int-ids'
-readonly ADDITIONAL_LEARN_OPTIONS='--learn'
+readonly ADDITIONAL_PSL_OPTIONS='-int-ids --postgres psl'
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator'
+
+declare -A WEIGHT_LEARNING_METHOD_OPTIONS
+WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
+WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='--learn org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
 
 readonly RULETYPES='-linear -orignal -quadratic'
 
 function main() {
    trap exit SIGINT
 
-   nfolds=$1
+   fold=$1
+   shift
+
+   wl_method=$1
    shift
 
    # Get the data
@@ -28,29 +34,26 @@ function main() {
    check_requirements
    fetch_psl
 
-   for ruletype in "$RULETYPES"
+   for ruletype in $RULETYPES
    do
-     for ((i=0; i<"${nfolds}"; i++))
-     do
-         # Run PSL
-         runWeightLearning "$ruletype" "$@"
-         runEvaluation "$@"
+       # Modify data file
+       modifyDataFile "0" "${fold}"
 
-         # Modify data file
-         modifyDataFile "${i}"
-     done
+       # Run PSL
+       runWeightLearning "$ruletype" "$wl_method" "$@"
+       runEvaluation "$@"
+
+       # Modify data file
+       modifyDataFile "${fold}" "0"
    done
-
-   # Modify data file
-    sed -i "s/\/$((nfolds - 1))\//\/0\//g" lastfm-learn.data
-    sed -i "s/\/$((nfolds - 1))\//\/0\//g" lastfm-eval.data
 }
 
 function modifyDataFile() {
-  fold=$1
+  old_fold=$1
+  new_fold=$2
 
-  sed -i "s/\/$fold\//\/$((fold + 1))\//g" lastfm-learn.data
-  sed -i "s/\/$fold\//\/$((fold + 1))\//g" lastfm-eval.data
+  sed -i "s/\/${old_fold}\//\/${new_fold}\//g" yelp-learn.data
+  sed -i "s/\/${old_fold}\//\/${new_fold}\//g" yelp-eval.data
 }
 
 function getData() {
@@ -66,12 +69,17 @@ function runWeightLearning() {
    ruletype=$1
    shift
 
+   wl_method=$1
+   shift
+
    echo "Running PSL Weight Learning"
 
-   java -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" ${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
-   if [[ "$?" -ne 0 ]]; then
-      echo 'ERROR: Failed to run weight learning'
-      exit 60
+   if [[ "uniform" != "${wl_method}" ]]; then
+     java -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}" ${ADDITIONAL_PSL_OPTIONS} "$@"
+     if [[ "$?" -ne 0 ]]; then
+        echo 'ERROR: Failed to run weight learning'
+        exit 60
+     fi
    fi
 }
 
@@ -81,13 +89,19 @@ function runEvaluation() {
 
    echo "Running PSL Inference"
 
-   java -jar "${JAR_PATH}" --model "${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
-   if [[ "$?" -ne 0 ]]; then
-      echo 'ERROR: Failed to run infernce'
-      exit 70
+   if [[ "uniform" != "${wl_method}" ]]; then
+     java -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+     if [[ "$?" -ne 0 ]]; then
+        echo 'ERROR: Failed to run infernce'
+        exit 70
+     fi
+   else
+     java -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+     if [[ "$?" -ne 0 ]]; then
+        echo 'ERROR: Failed to run infernce'
+        exit 70
+     fi
    fi
-
-   mv "${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl"
 }
 
 function check_requirements() {

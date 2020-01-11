@@ -9,17 +9,22 @@ readonly NUM_RUNS=1
 
 readonly STANDARD_PSL_OPTIONS='-D parallel.numthreads=1'
 
-readonly METHODS='admm'
+readonly INFERENCE_METHODS='ti'
+
+readonly WEIGHT_LEARNING_METHODS='uniform gpp'
 
 # Options specific to each method (missing keys yield empty strings).
-declare -A METHOD_OPTIONS
-METHOD_OPTIONS[sgd]='-D inference.termgenerator=SGDTermGenerator -D inference.termstore=SGDMemoryTermStore -D inference.reasoner=SGDReasoner -D sgd.tolerance=0.000001 -D sgd.maxiterations=500'
-METHOD_OPTIONS[ti]='--infer SGDStreamingInference -D sgd.tolerance=0.000001 -D sgd.maxiterations=500 -D sgd.truncateeverystep=false -D sgdstreaming.randomizepageaccess=false -D sgdstreaming.shufflepage=false'
+declare -A INFERENCE_METHOD_OPTIONS
+INFERENCE_METHOD_OPTIONS[sgd]='-D inference.termgenerator=SGDTermGenerator -D inference.termstore=SGDMemoryTermStore -D inference.reasoner=SGDReasoner -D sgd.tolerance=0.000001 -D sgd.maxiterations=500'
+INFERENCE_METHOD_OPTIONS[ti]='--infer SGDStreamingInference -D sgd.tolerance=0.000001 -D sgd.maxiterations=500 -D sgd.truncateeverystep=false -D sgdstreaming.randomizepageaccess=false -D sgdstreaming.shufflepage=false'
+
 
 function run() {
     local cliDir=$1
     local outDir=$2
-    local extraOptions=$3
+    local fold=$3
+    local wl_method=$3
+    local extraOptions=$4
 
     mkdir -p "${outDir}"
 
@@ -33,29 +38,32 @@ function run() {
     fi
 
     pushd . > /dev/null
-        cd "${clidir}/../data"
-        folds="$(ls -l | grep "^d" | wc -l)"
-    popd > /dev/null
-
-    pushd . > /dev/null
         cd "${cliDir}"
-        /usr/bin/time -v --output="${timePath}" ./run.sh ${folds} ${extraOptions} > "${outPath}" 2> "${errPath}"
+        /usr/bin/time -v --output="${timePath}" ./run.sh "${fold}" "${wl_method}" "${extraOptions}" > "${outPath}" 2> "${errPath}"
     popd > /dev/null
 }
 
 function run_example() {
     local exampleDir=$1
-    local method=$2
-    local iteration=$3
+    local inference_method=$2
+    local wl_method=$3
+    local iteration=$4
 
     local exampleName=`basename "${exampleDir}"`
     local cliDir="$exampleDir/cli"
 
-    local outDir="${BASE_OUT_DIR}/${iteration}/${exampleName}/${method}"
-    local options="${STANDARD_PSL_OPTIONS} ${EXAMPLE_OPTIONS[${exampleName}]} ${METHOD_OPTIONS[${method}]}"
+    pushd . > /dev/null
+        cd "${clidir}/../data"
+        nfolds="$(ls -l | grep "^d" | wc -l)"
+    popd > /dev/null
 
-    echo "Running ${exampleName} (#${iteration}) -- ${method}."
-    run  "${cliDir}" "${outDir}" "${options}"
+    for ((fold=0; i<"${nfolds}"; fold++)) do
+      local outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
+      local options="${STANDARD_PSL_OPTIONS} ${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
+
+      echo "Running ${exampleName} (#${iteration}) -- ${method}."
+      run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${options}"
+    done
 }
 
 function main() {
@@ -66,10 +74,10 @@ function main() {
 
     trap exit SIGINT
 
-    for i in `seq -w 1 ${NUM_RUNS}`; do
-        for exampleDir in "$@"; do
-            for method in ${METHODS}; do
-                run_example "${exampleDir}" "${method}" "${i}"
+    for exampleDir in "$@"; do
+        for inference_method in ${INFERENCE_METHODS}; do
+            for wl_method in ${WEIGHT_LEARNING_METHODS}; do
+              run_example "${exampleDir}" "${inference_method}" "${wl_method}"
             done
         done
     done
