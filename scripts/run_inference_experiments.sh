@@ -55,7 +55,7 @@ function run_example() {
     local options="${STANDARD_PSL_OPTIONS} ${EXAMPLE_OPTIONS[${exampleName}]} ${METHOD_OPTIONS[${method}]}"
 
     echo "Running ${exampleName} (#${iteration}) -- ${method}."
-    run "${cliDir}" "${outDir}" "${options}"
+    run  "${cliDir}" "${outDir}" "${options}"
 }
 
 function main() {

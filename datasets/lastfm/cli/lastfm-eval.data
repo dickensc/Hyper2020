@@ -17,7 +17,7 @@ predicates:
     sgd_rating/2: closed
     bpmf_rating/2: closed
     item_pearson_rating/2: closed
-    rating_prior/2: closed
+    rating_prior/1: closed
     rating/2: open
 
 observations:
