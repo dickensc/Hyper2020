@@ -1,6 +1,7 @@
 predicates:
     user/1: closed
     item/1: closed
+    constant/1: closed
     users_are_friends/2: closed
     sim_content_items_jaccard/2: closed
     sim_pearson_items/2: closed
@@ -24,6 +25,7 @@ predicates:
 observations:
     user: ../data/yelp/0/learn/user_obs.txt
     item: ../data/yelp/0/learn/item_obs.txt
+    constant: ../data/yelp/0/learn/constant_obs.txt
     users_are_friends: ../data/yelp/0/learn/users_are_friends_obs.txt
     sim_content_items_jaccard: ../data/yelp/0/learn/sim_content_items_jaccard_obs.txt
 
