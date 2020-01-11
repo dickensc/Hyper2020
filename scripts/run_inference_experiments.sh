@@ -5,7 +5,7 @@
 readonly THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly BASE_OUT_DIR="${THIS_DIR}/../results/inference"
 
-readonly NUM_RUNS=1
+readonly NUM_FOLDS=5
 
 readonly STANDARD_PSL_OPTIONS='-D parallel.numthreads=1'
 
@@ -51,10 +51,15 @@ function run_example() {
     local exampleName=`basename "${exampleDir}"`
     local cliDir="$exampleDir/cli"
 
-    pushd . > /dev/null
-        cd "${clidir}/../data/${exampleName}"
-        nfolds="$(ls -l | grep "^d" | wc -l)"
-    popd > /dev/null
+    echo "Running example"
+    pwd
+
+#    pushd . > /dev/null
+#        cd "${clidir}/../data/${exampleName}"
+#        nfolds="$(ls -l | grep "^d" | wc -l)"
+#    popd > /dev/null
+
+    local nfolds=NUM_FOLDS
 
     for ((fold=0; fold<"${nfolds}"; fold++)) do
       local outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"

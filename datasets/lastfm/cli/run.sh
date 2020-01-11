@@ -32,6 +32,10 @@ function main() {
    wl_method=$1
    shift
 
+   echo "fold ${fold}"
+   echo "wl_method ${wl_method}"
+   echo "$@"
+
    # Get the data
    getData
 
@@ -46,7 +50,7 @@ function main() {
 
        # Run PSL
        runWeightLearning "$ruletype" "$wl_method" "$@"
-       runEvaluation "$@"
+       runEvaluation "$ruletype" "$@"
 
        # Modify data file
        modifyDataFile "${fold}" "0"
@@ -72,15 +76,15 @@ function getData() {
 
 function runWeightLearning() {
    ruletype=$1
-   shift
-
-   wl_method=$1
-   shift
+   wl_method=$2
 
    echo "Running PSL Weight Learning"
 
+   echo "Weight Learning options"
+   echo "$2"
+
    if [[ "uniform" != "${wl_method}" ]]; then
-     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}" ${ADDITIONAL_PSL_OPTIONS} "$@"
+     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}" ${ADDITIONAL_PSL_OPTIONS} "$3"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run weight learning'
         exit 60
@@ -90,18 +94,20 @@ function runWeightLearning() {
 
 function runEvaluation() {
    ruletype=$1
-   shift
 
    echo "Running PSL Inference"
 
+   echo "evalutaion options"
+   echo "$2"
+
    if [[ "uniform" != "${wl_method}" ]]; then
-     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$2"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run infernce'
         exit 70
      fi
    else
-     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
+     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$2"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run infernce'
         exit 70
