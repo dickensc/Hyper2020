@@ -9,7 +9,7 @@ readonly NUM_RUNS=10
 
 readonly STANDARD_PSL_OPTIONS='-D parallel.numthreads=1'
 
-readonly METHODS='admm sgd ti'
+readonly METHODS='admm'
 
 # Options specific to each method (missing keys yield empty strings).
 declare -A METHOD_OPTIONS
