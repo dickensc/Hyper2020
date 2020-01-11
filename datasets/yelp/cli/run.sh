@@ -28,7 +28,7 @@ function main() {
    check_requirements
    fetch_psl
 
-   for ruletype in "${RULETYPES[@]}"
+   for ruletype in "$RULETYPES"
    do
      for ((i=0; i<"${nfolds}"; i++))
      do

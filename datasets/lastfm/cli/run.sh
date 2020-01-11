@@ -28,7 +28,7 @@ function main() {
    check_requirements
    fetch_psl
 
-   for ruletype in "${RULETYPES[@]}"
+   for ruletype in $RULETYPES
    do
      for ((i=0; i<"${nfolds}"; i++))
      do
@@ -67,8 +67,6 @@ function runWeightLearning() {
    shift
 
    echo "Running PSL Weight Learning"
-
-
 
    java -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" ${ADDITIONAL_LEARN_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$@"
    if [[ "$?" -ne 0 ]]; then
