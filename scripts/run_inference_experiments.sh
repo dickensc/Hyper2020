@@ -47,7 +47,6 @@ function run_example() {
     local exampleDir=$1
     local inference_method=$2
     local wl_method=$3
-    local iteration=$4
 
     local exampleName=`basename "${exampleDir}"`
     local cliDir="$exampleDir/cli"
@@ -57,11 +56,11 @@ function run_example() {
         nfolds="$(ls -l | grep "^d" | wc -l)"
     popd > /dev/null
 
-    for ((fold=0; i<"${nfolds}"; fold++)) do
+    for ((fold=0; fold<"${nfolds}"; fold++)) do
       local outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
       local options="${STANDARD_PSL_OPTIONS} ${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
 
-      echo "Running ${exampleName} (#${iteration}) -- ${method}."
+      echo "Running ${exampleName} (#${fold}) -- ${method}."
       run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${options}"
     done
 }

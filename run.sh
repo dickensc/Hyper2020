@@ -14,11 +14,6 @@ function main() {
 
     echo "Running inference experiments on datasets: [${INFERENCE_DATASETS}]."
     ./scripts/run_inference_experiments.sh $datasetPaths
-
-    datasetPaths=''
-    for dataset in $MEMORY_DATASETS; do
-        datasetPaths="${datasetPaths} datasets/${dataset}"
-    done
 }
 
 main "$@"

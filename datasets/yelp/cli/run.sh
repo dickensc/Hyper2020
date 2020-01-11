@@ -4,12 +4,12 @@
 # These options are blind-passed to the CLI.
 # Ex: ./run.sh -D log4j.threshold=DEBUG
 
-readonly PSL_VERSION='2.3.0-SNAPSHOT'
+readonly PSL_VERSION='2.2.1'
 readonly JAR_PATH="./psl-cli-${PSL_VERSION}.jar"
 readonly FETCH_DATA_SCRIPT='../data/fetchData.sh'
 readonly BASE_NAME='yelp'
 
-readonly ADDITIONAL_PSL_OPTIONS='-int-ids --postgres psl'
+readonly ADDITIONAL_PSL_OPTIONS='-int-ids --postgres psl -D log4j.threshold=TRACE persistedatommanager.throwaccessexception=false'
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator'
 
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
@@ -17,6 +17,10 @@ WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
 WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='--learn org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
 
 readonly RULETYPES='-linear -orignal -quadratic'
+
+readonly AVAILABLE_MEM_KB=$(cat /proc/meminfo | grep 'MemTotal' | sed 's/^[^0-9]\+\([0-9]\+\)[^0-9]\+$/\1/')
+# Floor by multiples of 5 and then reserve an additional 5 GB.
+readonly JAVA_MEM_GB=$((${AVAILABLE_MEM_KB} / 1024 / 1024 / 5 * 5 - 5))
 
 function main() {
    trap exit SIGINT
