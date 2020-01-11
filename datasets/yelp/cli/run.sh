@@ -30,10 +30,6 @@ function main() {
    wl_method=$2
    shift 2
 
-   echo "fold ${fold}"
-   echo "wl_method ${wl_method}"
-   echo "$@"
-
    # Get the data
    getData
 
@@ -78,8 +74,7 @@ function runWeightLearning() {
 
    echo "Running PSL Weight Learning"
 
-   echo "Weight Learning options"
-   echo "$@"
+   echo "Weight Learning options $3"
 
    if [[ "uniform" != "${wl_method}" ]]; then
      java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}" ${ADDITIONAL_PSL_OPTIONS} "$3"
@@ -96,8 +91,7 @@ function runEvaluation() {
 
    echo "Running PSL Inference"
 
-   echo "evalutaion options"
-   echo "$3"
+   echo "evalutaion options $3"
 
    if [[ "uniform" != "${wl_method}" ]]; then
      java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$3"

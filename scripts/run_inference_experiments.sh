@@ -52,12 +52,6 @@ function run_example() {
     local exampleName=`basename "${exampleDir}"`
     local cliDir="$exampleDir/cli"
 
-    echo "Running example"
-    pwd
-
-    echo "inference_method ${inference_method}"
-    echo "${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
-
 #    pushd . > /dev/null
 #        cd "${clidir}/../data/${exampleName}"
 #        nfolds="$(ls -l | grep "^d" | wc -l)"
