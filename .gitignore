@@ -30,3 +30,9 @@ inferred-predicates/
 
 # intellij metadata #
 .idea
+
+data/lastfm
+data/lastfm.zip
+
+data/yelp
+data/yelp.zip
