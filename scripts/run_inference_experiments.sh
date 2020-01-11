@@ -52,7 +52,7 @@ function run_example() {
     local cliDir="$exampleDir/cli"
 
     pushd . > /dev/null
-        cd "${clidir}/../data"
+        cd "${clidir}/../data/${exampleName}"
         nfolds="$(ls -l | grep "^d" | wc -l)"
     popd > /dev/null
 
