@@ -11,7 +11,8 @@ readonly STANDARD_PSL_OPTIONS='-D parallel.numthreads=1'
 
 readonly INFERENCE_METHODS='admm'
 
-readonly WEIGHT_LEARNING_METHODS='uniform gpp'
+#readonly WEIGHT_LEARNING_METHODS='uniform gpp'
+readonly WEIGHT_LEARNING_METHODS='gpp'
 
 # Options specific to each method (missing keys yield empty strings).
 declare -A INFERENCE_METHOD_OPTIONS
