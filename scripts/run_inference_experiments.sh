@@ -23,8 +23,8 @@ function run() {
     local cliDir=$1
     local outDir=$2
     local fold=$3
-    local wl_method=$3
-    local extraOptions=$4
+    local wl_method=$4
+    local extraOptions=$5
 
     mkdir -p "${outDir}"
 
@@ -54,17 +54,19 @@ function run_example() {
     echo "Running example"
     pwd
 
+    echo "inference_method ${inference_method}"
+    echo "${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
+
 #    pushd . > /dev/null
 #        cd "${clidir}/../data/${exampleName}"
 #        nfolds="$(ls -l | grep "^d" | wc -l)"
 #    popd > /dev/null
 
     local nfolds=NUM_FOLDS
+    local outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
+    local options="${STANDARD_PSL_OPTIONS} ${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
 
     for ((fold=0; fold<"${nfolds}"; fold++)) do
-      local outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${fold}"
-      local options="${STANDARD_PSL_OPTIONS} ${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
-
       echo "Running ${exampleName} (#${fold}) -- ${method}."
       run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${options}"
     done
