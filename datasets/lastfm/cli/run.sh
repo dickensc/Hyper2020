@@ -17,8 +17,6 @@ declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
 WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='--learn org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
 
-readonly RULETYPES='-linear -orignal -quadratic'
-
 readonly AVAILABLE_MEM_KB=$(cat /proc/meminfo | grep 'MemTotal' | sed 's/^[^0-9]\+\([0-9]\+\)[^0-9]\+$/\1/')
 # Floor by multiples of 5 and then reserve an additional 5 GB.
 readonly JAVA_MEM_GB=$((${AVAILABLE_MEM_KB} / 1024 / 1024 / 5 * 5 - 5))
@@ -28,7 +26,8 @@ function main() {
 
    fold=$1
    wl_method=$2
-   shift 2
+   ruletype=$3
+   shift 3
 
    # Get the data
    getData
@@ -37,18 +36,15 @@ function main() {
    check_requirements
    fetch_psl
 
-   for ruletype in $RULETYPES
-   do
-       # Modify data file
-       modifyDataFile "0" "${fold}"
+   # Modify data file
+   modifyDataFile "0" "${fold}"
 
-       # Run PSL
-       runWeightLearning "$ruletype" "$wl_method" "$@"
-       runEvaluation "$ruletype" "$wl_method" "$@"
+   # Run PSL
+   runWeightLearning "$ruletype" "$wl_method" "$@"
+   runEvaluation "$ruletype" "$wl_method" "$@"
 
-       # Modify data file
-       modifyDataFile "${fold}" "0"
-   done
+   # Modify data file
+   modifyDataFile "${fold}" "0"
 }
 
 function modifyDataFile() {

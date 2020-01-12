@@ -28,7 +28,8 @@ function main() {
 
    fold=$1
    wl_method=$2
-   shift 2
+   ruletype=$3
+   shift 3
 
    # Get the data
    getData
@@ -37,18 +38,16 @@ function main() {
    check_requirements
    fetch_psl
 
-   for ruletype in $RULETYPES
-   do
-       # Modify data file
-       modifyDataFile "0" "${fold}"
+   # Modify data file
+   modifyDataFile "0" "${fold}"
 
-       # Run PSL
-       runWeightLearning "$ruletype" "$wl_method" "$@"
-       runEvaluation "$ruletype" "$wl_method" "$@"
+   # Run PSL
+   runWeightLearning "$ruletype" "$wl_method" "$@"
+   runEvaluation "$ruletype" "$wl_method" "$@"
 
        # Modify data file
-       modifyDataFile "${fold}" "0"
-   done
+   # Modify data file
+   modifyDataFile "${fold}" "0"
 }
 
 function modifyDataFile() {
@@ -73,7 +72,6 @@ function runWeightLearning() {
    wl_method=$2
 
    echo "Running PSL Weight Learning"
-
    echo "Weight Learning options $3"
 
    if [[ "uniform" != "${wl_method}" ]]; then
