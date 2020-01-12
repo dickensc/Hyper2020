@@ -10,12 +10,12 @@ readonly FETCH_DATA_SCRIPT='../data/fetchData.sh'
 readonly BASE_NAME='lastfm'
 
 readonly ADDITIONAL_PSL_OPTIONS='-int-ids --postgres psl -D log4j.threshold=TRACE persistedatommanager.throwaccessexception=false'
-readonly ADDITIONAL_PSL_OPTIONS='-int-ids -D log4j.threshold=TRACE persistedatommanager.throwaccessexception=false'
+#readonly ADDITIONAL_PSL_OPTIONS='-int-ids -D log4j.threshold=TRACE persistedatommanager.throwaccessexception=false'
 readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statistics.ContinuousEvaluator'
 
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
-WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='-l org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
+WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='-l org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior -D gpp.kernel=weightedSquaredExp -D gppker.reldep=1 -D gpp.explore=10 -D gpp.maxiter=50 -D weightlearning.evaluator=org.linqs.psl.evaluation.statistics.ContinuousEvaluator -D gppker.space=OS'
 
 readonly RULETYPES='-linear -orignal -quadratic'
 
