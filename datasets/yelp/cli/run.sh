@@ -45,7 +45,6 @@ function main() {
    runWeightLearning "$ruletype" "$wl_method" "$@"
    runEvaluation "$ruletype" "$wl_method" "$@"
 
-       # Modify data file
    # Modify data file
    modifyDataFile "${fold}" "0"
 }

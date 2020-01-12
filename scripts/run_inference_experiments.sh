@@ -25,7 +25,7 @@ function run() {
     local outDir=$2
     local fold=$3
     local wl_method=$4
-    local rule_type=5
+    local rule_type=$5
     local extraOptions=$6
 
     mkdir -p "${outDir}"
