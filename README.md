@@ -65,9 +65,9 @@
         - => number of groundings ~= 29000 * 4000 * N_SIM = 116,000,000 * N_SIM
         - if N_SIM was 50 then number of groundings ~= 5,800,000,000 = 5.8 * 10^9
         
-  There are, in the original Hyper system 9 of these similarity based rules. Thus the number of groundings is on the order of tens of billions, which is reaching the capacity of PSL inference.
+  There are, in the original Hyper system, 9 of these similarity based rules. Thus the number of groundings is on the order of tens of billions, which is reaching the capacity of PSL inference.
   
-  If we perform rule pruning, we could filter out the unnecessary rules and then perform inference without blocking.  
+  If we perform rule pruning, we could potentially filter out the unnecessary rules and then perform inference without blocking.  
  
   ```
  @conference {,
@@ -80,6 +80,9 @@
  ```
 
 ## Rule Pruning
+
+
+Currently there are 
 
 
  
