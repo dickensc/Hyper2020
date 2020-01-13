@@ -9,7 +9,7 @@
  
  Experiments are ran using both the lastfm and yelp datasets.
  ./run.sh wil perform weightlearning and evaluations for all 5 splits of data found in https://linqs-data.soe.ucsc.edu/public/hyper2020/<lastfm.zip, yelp.zip>.
- For each split it will run GaussianProcessPrior weight learning, and evaluation for both uniform and learned weights.
+ For each split it will run GaussianProcessPrior weight learning (piecewise sudo likelihood), and evaluation for both uniform and learned weights.
  Furthermore, for each split linear, quadratic, and original/mixture hingle loss potentials for rules are used.
  
  The output is stored in a results directory with a unique path for each experiment.
@@ -68,7 +68,11 @@
   There are, in the original Hyper system, 9 of these similarity based rules. Thus the number of groundings is on the order of tens of billions, which is reaching the capacity of PSL inference.
   
   If we perform rule pruning, we could potentially filter out the unnecessary rules and then perform inference without blocking.  
- 
+  
+  We ability to tune amount of blocking.
+      - Mixing pairwise similarity blocking with "community"
+
+
   ```
  @conference {,
      title = {Tandem Inference: An Out-of-Core Streaming Algorithm For Very Large-Scale Relational Inference},
@@ -128,6 +132,10 @@ Currently there are potentitailly redundant relations in the rules shown below.
 
 We could experiment with the model sensitivity to removing rules of a similar structure.
 
+
+## Learn / Eval Splits
+
+How is it done?
  
  ## Original HyPER System
 
