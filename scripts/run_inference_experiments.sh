@@ -53,11 +53,6 @@ function run_example() {
     local exampleName=`basename "${exampleDir}"`
     local cliDir="$exampleDir/cli"
 
-#    pushd . > /dev/null
-#        cd "${clidir}/../data/${exampleName}"
-#        nfolds="$(ls -l | grep "^d" | wc -l)"
-#    popd > /dev/null
-
     local nfolds=NUM_FOLDS
     local outDir
     local options="${STANDARD_PSL_OPTIONS} ${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
