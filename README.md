@@ -4,7 +4,7 @@
  
  The primary goal of this reworking is to bring the HyPER recommendation system up to date with current PSL standards as a new starting point for further recommender system research.
  
- ## Running Experiemnts with run.sh
+ ## Running Experiments with run.sh
  ./run.sh will perform all the experiments that are intended to find the best possible default settings for the Hyper Reccomender system.
  
  Experiments are ran using both the lastfm and yelp datasets.
@@ -16,7 +16,7 @@
  
  Currently results for an entire run in January 2020 have been stored [here](https://docs.google.com/spreadsheets/d/1-n_3-3ZeKUQZpC87DnU-oHFe5Vw_20EBBo12uTWHNPk/edit#gid=0)
  
- ## Squared hinge-loss potentials
+ ## Hinge-loss potentials
  The original 2015 HyPER system used primarily linear hinge-loss functions. 
  Non-squared potentials tend to encourage a "winner take all" optimization, pushing inferred predicate values to extreme, 0 or 1, values.
  Squard hinge-loss potentials encourage more of a trade off.
@@ -24,7 +24,7 @@
  An updated version of HyPER was used to develop a Fairness-aware Hybrid Recommender System which utilized only squared hinge-loss potentials.
  See *Golnoosh Farnadi and Kouki, Pigi and Spencer K. Thompson and Sriram Srinivasan and Lise Getoor 2018*
  
- Lastly, a comparison between the two approaches was performed in January 2020 showing little difference infering with linear or quadratic potentials.
+ Lastly, a comparison between three approaches was performed in January 2020 showing the differences between infering with linear or quadratic potentials.
  See [link](https://docs.google.com/spreadsheets/d/1-n_3-3ZeKUQZpC87DnU-oHFe5Vw_20EBBo12uTWHNPk/edit#gid=0)
 
 
