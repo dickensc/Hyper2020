@@ -1,24 +1,20 @@
 # HyPER2020
 
-./run.sh will run examples passed , go through all splits, and for each split will run GPP, uniform, linear, quadratic, and original/mixture, block.
-
  Reworking of the Hyper Recommender system.
- 
- The original HyPER recommender system made design decisions that were necessary for scalability with the PSL version being used in 2015. 
- However, thanks to recent advancements in the PSL grounding and inference process, the PSL system can now handle significantly larger and more complex queries.
- See *Srinivasan S., Augustine E., and Getoor L. 2020*.
  
  The primary goal of this reworking is to bring the HyPER recommendation system up to date with current PSL standards as a new starting point for further recommender system research.
  
- ```
- @conference {,
-     title = {Tandem Inference: An Out-of-Core Streaming Algorithm For Very Large-Scale Relational Inference},
-     booktitle = {34th AAAI Conference on Artificial Intelligence},
-     year = {2020},
-     month = {11/2019},
-     author = {Sriram Srinivasan* and Eriq Augustine* and Lise Getoor}
- }
- ```
+ ## Running Experiemnts with run.sh
+ ./run.sh will perform all the experiments that are intended to find the best possible default settings for the Hyper Reccomender system.
+ 
+ Experiments are ran using both the lastfm and yelp datasets.
+ ./run.sh wil perform weightlearning and evaluations for all 5 splits of data found in https://linqs-data.soe.ucsc.edu/public/hyper2020/<lastfm.zip, yelp.zip>.
+ For each split it will run GaussianProcessPrior weight learning, and evaluation for both uniform and learned weights.
+ Furthermore, for each split linear, quadratic, and original/mixture hingle loss potentials for rules are used.
+ 
+ The output is stored in a results directory with a unique path for each experiment.
+ 
+ Currently results for an entire run in January 202 have been stored [here](https://docs.google.com/spreadsheets/d/1-n_3-3ZeKUQZpC87DnU-oHFe5Vw_20EBBo12uTWHNPk/edit#gid=0)
  
  ## Squared hinge-loss potentials
  The original 2015 HyPER system used primarily linear hinge-loss functions. 
@@ -30,8 +26,6 @@
  
  Lastly, a comparison between the two approaches was performed in January 2020 showing little difference infering with linear or quadratic potentials.
  See [link](https://docs.google.com/spreadsheets/d/1-n_3-3ZeKUQZpC87DnU-oHFe5Vw_20EBBo12uTWHNPk/edit#gid=0)
- 
- This version adopts the squared hinge-loss potentials methodology.
 
 
 ```
@@ -45,10 +39,49 @@
 
 ## Blocking Predicates
 
-Linear runs faster. 
-
+ The original HyPER recommender system made design decisions that were necessary for scalability with the PSL version being used in 2015. 
+ However, thanks to recent advancements in the PSL grounding and inference process, the PSL system can now handle significantly larger and more complex queries.
+ See *Srinivasan S., Augustine E., and Getoor L. 2020*.
+ 
+ If, hypothetically, all 'rated' blocking predicates were removed, then the number of groundings from the rules:
+ 
+ 1.0 : rating(U,I1) & sim_\<method\>_items(I1,I2) >> rating(U,I2)
+ 
+ 1.0 : rating(U1,I) & sim_\<method\>_users(U1,U2) >> rating(U2,I)
+ 
+ could be approximated as is shown in the bullets below:
+ 
+    - lastfm: 
+        - Number of users ~= 1900
+        - Number of items ~= 13000
+        - Number of similarities in item/user canopy ~= N_SIM 
+        - => number of groundings ~= 1900 * 13000 * N_SIM = 24,700,000 * N_SIM
+        - if N_SIM was 50 then number of groundings ~= 1,235,000,000 = 1.235 * 10^9
+    
+    - yelp: 
+        - Number of users ~= 29000
+        - Number of items ~= 4000
+        - Number of similarities in item/user canopy ~= N_SIM 
+        - => number of groundings ~= 29000 * 4000 * N_SIM = 116,000,000 * N_SIM
+        - if N_SIM was 50 then number of groundings ~= 5,800,000,000 = 5.8 * 10^9
+        
+  There are, in the original Hyper system 9 of these similarity based rules. Thus the number of groundings is on the order of tens of billions, which is reaching the capacity of PSL inference.
+  
+  If we perform rule pruning, we could filter out the unnecessary rules and then perform inference without blocking.  
+ 
+  ```
+ @conference {,
+     title = {Tandem Inference: An Out-of-Core Streaming Algorithm For Very Large-Scale Relational Inference},
+     booktitle = {34th AAAI Conference on Artificial Intelligence},
+     year = {2020},
+     month = {11/2019},
+     author = {Sriram Srinivasan* and Eriq Augustine* and Lise Getoor}
+ }
+ ```
 
 ## Rule Pruning
+
+
  
  ## Original HyPER System
 
