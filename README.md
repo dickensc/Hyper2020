@@ -14,7 +14,7 @@
  
  The output is stored in a results directory with a unique path for each experiment.
  
- Currently results for an entire run in January 202 have been stored [here](https://docs.google.com/spreadsheets/d/1-n_3-3ZeKUQZpC87DnU-oHFe5Vw_20EBBo12uTWHNPk/edit#gid=0)
+ Currently results for an entire run in January 2020 have been stored [here](https://docs.google.com/spreadsheets/d/1-n_3-3ZeKUQZpC87DnU-oHFe5Vw_20EBBo12uTWHNPk/edit#gid=0)
  
  ## Squared hinge-loss potentials
  The original 2015 HyPER system used primarily linear hinge-loss functions. 
