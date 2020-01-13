@@ -83,6 +83,7 @@
 
 Currently there are potentitailly redundant relations in the rules shown below.
 
+```
 // Similarities like Pearson, Cosine, and Adjusted Cosine Similarity between items.
 1.0 :  rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_pearson_items(I1,I2) >> rating(U,I2)
 1.0 :  rated(U,I1) & rated(U,I2) & rating(U,I1) & sim_cosine_items(I1,I2) >> rating(U,I2)
@@ -123,7 +124,7 @@ Currently there are potentitailly redundant relations in the rules shown below.
 // Two-sided overall prior (In original rec sys '15 paper but not in psl-examples)
 1.0 : constant(C) & user(U) & item(I) & rated(U,I) & rating_prior(C) >> rating(U,I)
 1.0 : constant(C) & user(I) & item(I) & rated(U,I) & rating(U,I) >> rating_prior(C)
-
+```
 
 We could experiment with the model sensitivity to removing rules of a similar structure.
 
