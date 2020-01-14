@@ -16,6 +16,7 @@ readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statis
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
 WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='--learn org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
+WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]='--learn org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood'
 
 readonly RULETYPES='-linear -orignal -quadratic'
 
@@ -74,7 +75,7 @@ function runWeightLearning() {
    echo "Weight Learning options $3"
 
    if [[ "uniform" != "${wl_method}" ]]; then
-     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" --learn org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior ${ADDITIONAL_PSL_OPTIONS} "$3"
+     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" "$(WEIGHT_LEARNING_METHOD_OPTIONS["${wl_method}"])" ${ADDITIONAL_PSL_OPTIONS} "$3"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run weight learning'
         exit 60
