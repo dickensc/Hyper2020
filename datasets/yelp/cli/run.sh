@@ -67,6 +67,36 @@ function getData() {
    popd > /dev/null
 }
 
+function runRulePruning() {
+   ruletype=$1
+   wl_method=$2
+
+   echo "Running PSL Rule Pruning"
+   echo "Weight Learning options: $3"
+
+   echo "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
+   wl_options="${WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]}"
+
+   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" --learn "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
+   if [[ "$?" -ne 0 ]]; then
+      echo 'ERROR: Failed to run weight learning'
+      exit 60
+   fi
+
+   pushd . > /dev/null
+      cd "../${BASE_NAME}${ruletype}/cli"
+
+      # copy learned weights to -pruned.psl
+      cp "./${BASE_NAME}-learned.psl" "./${BASE_NAME}-pruned.psl"
+
+      # prune the rules and write to .psl
+      grep -v -e "^0$" "./${BASE_NAME}-learned.psl"
+
+      # save to .psl
+      mv "./${BASE_NAME}-learned.psl" "./${BASE_NAME}.psl"
+   popd > /dev/null
+}
+
 function runWeightLearning() {
    ruletype=$1
    wl_method=$2
