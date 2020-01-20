@@ -11,7 +11,7 @@ readonly INFERENCE_METHODS='admm'
 
 readonly WEIGHT_LEARNING_METHODS='gpp uniform'
 readonly RULETYPES='-linear -original -quadratic'
-readonly PRUNE='Prune Not-Prune'
+readonly PRUNE='TakeTopPruning DropBottomPruning NotPrune'
 
 # Options specific to each method (missing keys yield empty strings).
 declare -A INFERENCE_METHOD_OPTIONS
@@ -25,7 +25,7 @@ function run() {
     local fold=$3
     local wl_method=$4
     local rule_type=$5
-    local pruned=$6
+    local pruneMethod=$6
     local extraOptions=$7
 
     mkdir -p "${outDir}"
@@ -41,7 +41,7 @@ function run() {
 
     pushd . > /dev/null
         cd "${cliDir}"
-        /usr/bin/time -v --output="${timePath}" ./run.sh "${fold}" "${wl_method}" "${rule_type}" "${pruned}" "${extraOptions}" > "${outPath}" 2> "${errPath}"
+        /usr/bin/time -v --output="${timePath}" ./run.sh "${fold}" "${wl_method}" "${rule_type}" "${pruneMethod}" "${extraOptions}" > "${outPath}" 2> "${errPath}"
     popd > /dev/null
 }
 
@@ -58,11 +58,12 @@ function run_example() {
     local options="${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
 
    for ruletype in $RULETYPES; do
-     for pruned in PRUNE; do
+     for pruneMethod in PRUNE; do
         for ((fold=0; fold<"${nfolds}"; fold++)) do
           echo "Running ${exampleName} (#${fold}) -- ${method}."
           outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${ruletype}/${pruned}/${fold}"
-          run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${ruletype}" ${pruned} "${options}"
+          run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${ruletype}" ${pruneMethod} "${options}"
+          done
         done
     done
 }

@@ -28,7 +28,7 @@ function main() {
    fold=$1
    wl_method=$2
    ruletype=$3
-   pruned=$4
+   pruneMethod=$4
    shift 4
 
    # Get the data
@@ -41,12 +41,9 @@ function main() {
    # Modify data file
    modifyDataFile "0" "${fold}"
 
-   if [[ "Prune" == "${pruned}" ]]; then
-     runRulePruning "$ruletype" "$wl_method" "$@"
-   fi
-
    # Run PSL
-   runWeightLearning "$ruletype" "$wl_method" "$@"
+   runRulePruning "$ruletype" "$pruneMethod" "$@"
+   runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "$wl_method" "$@"
    runEvaluation "$ruletype" "$wl_method" "$@"
 
    # Modify data file
@@ -72,36 +69,34 @@ function getData() {
 
 function runRulePruning() {
    ruletype=$1
-   wl_method=$2
+   pruneMethod=$2
 
-   echo "Running PSL Rule Pruning"
-   echo "Weight Learning options: $3"
 
-   echo "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
-   wl_options="${WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]}"
+   if [[ "NotPrune" != "${pruneMethod}" ]]; then
 
-   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" --learn "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
-   if [[ "$?" -ne 0 ]]; then
-      echo 'ERROR: Failed to run weight learning'
-      exit 60
+     echo "Running PSL Rule Pruning"
+     echo "Pruning Additional Options: $3"
+
+      # check if we already have mppl-learned.psl
+      if [[ ! -f "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" ]]; then
+         # Run MPPL Weight Learning
+         runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "maxPiecewiseSudoLikelihood" "$3"
+
+         # Move learned weights to ../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl
+         mv "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl"
+      fi
+
+      # prune the rules
+      python "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" "${pruneMethod}"
+
+   else
+      # copy the original .psl file to -pruned.psl
+      cp "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl"
    fi
-
-   pushd . > /dev/null
-      cd "../${BASE_NAME}${ruletype}/cli"
-
-      # copy learned weights to -pruned.psl
-      cp "./${BASE_NAME}-learned.psl" "./${BASE_NAME}-pruned.psl"
-
-      # prune the rules and write to .psl
-      grep -v -e "^0$" "./${BASE_NAME}-learned.psl"
-
-      # save to .psl
-      mv "./${BASE_NAME}-learned.psl" "./${BASE_NAME}.psl"
-   popd > /dev/null
 }
 
 function runWeightLearning() {
-   ruletype=$1
+   modelPath=$1
    wl_method=$2
 
    echo "Running PSL Weight Learning"
@@ -111,7 +106,7 @@ function runWeightLearning() {
    wl_options="${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
 
    if [[ "uniform" != "${wl_method}" ]]; then
-     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" --learn "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
+     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${modelPath}" --data "${BASE_NAME}-learn.data" --learn "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run weight learning'
         exit 60
@@ -144,6 +139,7 @@ function runEvaluation() {
 function check_requirements() {
    local hasWget
    local hasCurl
+   local hasPython
 
    type wget > /dev/null 2> /dev/null
    hasWget=$?
@@ -159,6 +155,12 @@ function check_requirements() {
    type java > /dev/null 2> /dev/null
    if [[ "$?" -ne 0 ]]; then
       echo 'ERROR: java required to run project'
+      exit 13
+   fi
+
+   type python > /dev/null 2> /dev/null
+   if [[ "$?" -ne 0 ]]; then
+      echo 'ERROR: python required to run project'
       exit 13
    fi
 }
