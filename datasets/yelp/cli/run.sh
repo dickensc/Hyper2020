@@ -91,7 +91,7 @@ function runRulePruning() {
      mv "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl"
 
      # prune the rules
-     python psl_rule_prune.py "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" "${pruneMethod}" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl"
+     python3 psl_rule_prune.py "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" "${pruneMethod}" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl"
 
    else
       # copy the original .psl file to -pruned.psl
@@ -105,6 +105,8 @@ function runWeightLearning() {
 
    echo "Running PSL Weight Learning"
    echo "Weight Learning options: $3"
+
+   echo "$wl_method"
 
    echo "${WEIGHT_LEARNING_METHODS[${wl_method}]}"
    wl_method="${WEIGHT_LEARNING_METHODS[${wl_method}]}"
