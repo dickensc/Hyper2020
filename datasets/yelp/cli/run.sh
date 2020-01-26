@@ -16,7 +16,7 @@ readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statis
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
 WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
-WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood'
+WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood -D votedperceptron.stepsize=10 -D votedperceptron.numsteps=100'
 
 readonly RULETYPES='-linear -orignal -quadratic'
 
@@ -30,7 +30,8 @@ function main() {
    fold=$1
    wl_method=$2
    ruletype=$3
-   shift 3
+   pruneMethod=$4
+   shift 4
 
    # Get the data
    getData
@@ -43,7 +44,8 @@ function main() {
    modifyDataFile "0" "${fold}"
 
    # Run PSL
-   runWeightLearning "$ruletype" "$wl_method" "$@"
+   runRulePruning "$ruletype" "$pruneMethod" "$@"
+   runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl" "$wl_method" "$@"
    runEvaluation "$ruletype" "$wl_method" "$@"
 
    # Modify data file
@@ -69,46 +71,41 @@ function getData() {
 
 function runRulePruning() {
    ruletype=$1
-   wl_method=$2
+   pruneMethod=$2
 
-   echo "Running PSL Rule Pruning"
-   echo "Weight Learning options: $3"
+   # check if rule pruning for this iteration
+   if [[ "${pruneMethod}" != "NotPrune" ]]; then
 
-   echo "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
-   wl_options="${WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]}"
+     echo "Running PSL Rule Pruning"
+     echo "Pruning Additional Options: $3"
 
-   java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" --learn "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
-   if [[ "$?" -ne 0 ]]; then
-      echo 'ERROR: Failed to run weight learning'
-      exit 60
+     # Run MPPL Weight Learning
+     runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "maxPiecewiseSudoLikelihood" "$3"
+
+     # Move / rename learned weights to ../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl
+     mv "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl"
+
+     # prune the rules
+     python psl_rule_prune.py "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" "${pruneMethod}" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl"
+
+   else
+      # copy the original .psl file to -pruned.psl
+      cp "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl"
    fi
-
-   pushd . > /dev/null
-      cd "../${BASE_NAME}${ruletype}/cli"
-
-      # copy learned weights to -pruned.psl
-      cp "./${BASE_NAME}-learned.psl" "./${BASE_NAME}-pruned.psl"
-
-      # prune the rules and write to .psl
-      grep -v -e "^0$" "./${BASE_NAME}-learned.psl"
-
-      # save to .psl
-      mv "./${BASE_NAME}-learned.psl" "./${BASE_NAME}.psl"
-   popd > /dev/null
 }
 
 function runWeightLearning() {
-   ruletype=$1
+   modelPath=$1
    wl_method=$2
 
    echo "Running PSL Weight Learning"
-   echo "Weight Learning options $3"
+   echo "Weight Learning options: $3"
 
    echo "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
    wl_options="${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
 
    if [[ "uniform" != "${wl_method}" ]]; then
-     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" --data "${BASE_NAME}-learn.data" --learn "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
+     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${modelPath}" --data "${BASE_NAME}-learn.data" --learn "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run weight learning'
         exit 60

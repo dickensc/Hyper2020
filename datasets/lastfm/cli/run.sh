@@ -16,7 +16,7 @@ readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statis
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
 WEIGHT_LEARNING_METHOD_OPTIONS[gpp]='org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
-WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood'
+WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood -D votedperceptron.stepsize=10 -D votedperceptron.numsteps=100'
 
 readonly AVAILABLE_MEM_KB=$(cat /proc/meminfo | grep 'MemTotal' | sed 's/^[^0-9]\+\([0-9]\+\)[^0-9]\+$/\1/')
 # Floor by multiples of 5 and then reserve an additional 5 GB.
@@ -43,7 +43,7 @@ function main() {
 
    # Run PSL
    runRulePruning "$ruletype" "$pruneMethod" "$@"
-   runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "$wl_method" "$@"
+   runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl" "$wl_method" "$@"
    runEvaluation "$ruletype" "$wl_method" "$@"
 
    # Modify data file
@@ -71,23 +71,20 @@ function runRulePruning() {
    ruletype=$1
    pruneMethod=$2
 
-
-   if [[ "NotPrune" != "${pruneMethod}" ]]; then
+   # check if rule pruning for this iteration
+   if [[ "${pruneMethod}" != "NotPrune" ]]; then
 
      echo "Running PSL Rule Pruning"
      echo "Pruning Additional Options: $3"
 
-      # check if we already have mppl-learned.psl
-      if [[ ! -f "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" ]]; then
-         # Run MPPL Weight Learning
-         runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "maxPiecewiseSudoLikelihood" "$3"
+     # Run MPPL Weight Learning
+     runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "maxPiecewiseSudoLikelihood" "$3"
 
-         # Move learned weights to ../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl
-         mv "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl"
-      fi
+     # Move / rename learned weights to ../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl
+     mv "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl"
 
-      # prune the rules
-      python "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" "${pruneMethod}"
+     # prune the rules
+     python psl_rule_prune.py "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl" "${pruneMethod}" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-pruned.psl"
 
    else
       # copy the original .psl file to -pruned.psl
@@ -121,7 +118,7 @@ function runEvaluation() {
    echo "Running PSL Inference"
    echo "Evaluation options: $3"
 
-   if [[ "uniform" != "${wl_method}" ]]; then
+   if [[ "${wl_method}" != "uniform" ]]; then
      java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" --data "${BASE_NAME}-eval.data" --output inferred-predicates ${ADDITIONAL_EVAL_OPTIONS} ${ADDITIONAL_PSL_OPTIONS} "$3"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run infernce'

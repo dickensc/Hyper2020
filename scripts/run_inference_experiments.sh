@@ -10,7 +10,8 @@ readonly NUM_FOLDS=5
 readonly INFERENCE_METHODS='admm'
 
 readonly WEIGHT_LEARNING_METHODS='gpp uniform'
-readonly RULETYPES='-linear -original -quadratic'
+#readonly RULETYPES='-linear -original -quadratic'
+readonly RULETYPES='-linear -quadratic'
 readonly PRUNE='TakeTopPruning DropBottomPruning NotPrune'
 
 # Options specific to each method (missing keys yield empty strings).
@@ -58,11 +59,11 @@ function run_example() {
     local options="${INFERENCE_METHOD_OPTIONS[${inference_method}]}"
 
    for ruletype in $RULETYPES; do
-     for pruneMethod in PRUNE; do
+     for pruneMethod in $PRUNE; do
         for ((fold=0; fold<"${nfolds}"; fold++)) do
-          echo "Running ${exampleName} (#${fold}) -- ${method}."
-          outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${ruletype}/${pruned}/${fold}"
-          run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${ruletype}" ${pruneMethod} "${options}"
+          echo "Running ${exampleName} (#${fold}) -- ${pruneMethod}."
+          outDir="${BASE_OUT_DIR}/${exampleName}/${inference_method}/${wl_method}/${ruletype}/${pruneMethod}/${fold}"
+          run  "${cliDir}" "${outDir}" "${fold}" "${wl_method}" "${ruletype}" "${pruneMethod}" "${options}"
           done
         done
     done
