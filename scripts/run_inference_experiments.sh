@@ -13,7 +13,8 @@ readonly INFERENCE_METHODS='admm'
 readonly WEIGHT_LEARNING_METHODS='MaxPiecewisePseudoLikelihood'
 #readonly RULETYPES='-linear -original -quadratic'
 readonly RULETYPES='-linear -quadratic'
-readonly PRUNE='TakeTopPruning DropBottomPruning NotPrune'
+#readonly PRUNE='TakeTopPruning DropBottomPruning NotPrune'
+readonly PRUNE='NotPrune'
 
 # Options specific to each method (missing keys yield empty strings).
 declare -A INFERENCE_METHOD_OPTIONS
