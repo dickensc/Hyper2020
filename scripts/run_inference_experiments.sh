@@ -9,12 +9,12 @@ readonly NUM_FOLDS=5
 
 readonly INFERENCE_METHODS='admm'
 
-#readonly WEIGHT_LEARNING_METHODS='gpp uniform'
-readonly WEIGHT_LEARNING_METHODS='maxPiecewisePseudoLikelihood'
+readonly WEIGHT_LEARNING_METHODS='gpp'
+#readonly WEIGHT_LEARNING_METHODS='maxPiecewisePseudoLikelihood'
 #readonly RULETYPES='-linear -original -quadratic'
 readonly RULETYPES='-linear -quadratic'
-#readonly PRUNE='TakeTopPruning DropBottomPruning NotPrune'
-readonly PRUNE='NotPrune'
+readonly PRUNE='TakeTopPruning DropBottomPruning NotPrune'
+#readonly PRUNE='NotPrune'
 
 # Options specific to each method (missing keys yield empty strings).
 declare -A INFERENCE_METHOD_OPTIONS
