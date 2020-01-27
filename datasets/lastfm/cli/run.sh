@@ -16,12 +16,12 @@ readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statis
 declare -A WEIGHT_LEARNING_METHODS
 WEIGHT_LEARNING_METHODS[uniform]=''
 WEIGHT_LEARNING_METHODS[gpp]='org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
-WEIGHT_LEARNING_METHODS[maxPiecewiseSudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood'
+WEIGHT_LEARNING_METHODS[maxPiecewisePseudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood'
 
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
 WEIGHT_LEARNING_METHOD_OPTIONS[gpp]=''
-WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewiseSudoLikelihood]='-D votedperceptron.stepsize=10 -D votedperceptron.numsteps=100'
+WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewisePseudoLikelihood]='-D votedperceptron.stepsize=10 -D votedperceptron.numsteps=100'
 
 readonly AVAILABLE_MEM_KB=$(cat /proc/meminfo | grep 'MemTotal' | sed 's/^[^0-9]\+\([0-9]\+\)[^0-9]\+$/\1/')
 # Floor by multiples of 5 and then reserve an additional 5 GB.
@@ -83,7 +83,7 @@ function runRulePruning() {
      echo "Pruning Additional Options: $3"
 
      # Run MPPL Weight Learning
-     runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "maxPiecewiseSudoLikelihood" "$3"
+     runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "maxPiecewisePseudoLikelihood" "$3"
 
      # Move / rename learned weights to ../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl
      mv "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl"
@@ -104,16 +104,18 @@ function runWeightLearning() {
    echo "Running PSL Weight Learning"
    echo "Weight Learning options: $3"
 
-   echo "$wl_method"
+   echo "Weight learning Method: $wl_method"
 
    echo "${WEIGHT_LEARNING_METHODS[${wl_method}]}"
-   wl_method="${WEIGHT_LEARNING_METHODS[${wl_method}]}"
+   wl_method_class="${WEIGHT_LEARNING_METHODS[${wl_method}]}"
+
+   echo "Weight learning Class: $wl_method_class"
 
    echo "${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
    wl_options="${WEIGHT_LEARNING_METHOD_OPTIONS[${wl_method}]}"
 
    if [[ "uniform" != "${wl_method}" ]]; then
-     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${modelPath}" --data "${BASE_NAME}-learn.data" --learn "${wl_method}" "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
+     java -Xmx${JAVA_MEM_GB}G -Xms${JAVA_MEM_GB}G -jar "${JAR_PATH}" --model "${modelPath}" --data "${BASE_NAME}-learn.data" --learn "${wl_method_class}" "${wl_options}" ${ADDITIONAL_PSL_OPTIONS} "$3"
      if [[ "$?" -ne 0 ]]; then
         echo 'ERROR: Failed to run weight learning'
         exit 60
