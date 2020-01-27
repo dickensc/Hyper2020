@@ -30,10 +30,10 @@ readonly JAVA_MEM_GB=$((${AVAILABLE_MEM_KB} / 1024 / 1024 / 5 * 5 - 5))
 function main() {
    trap exit SIGINT
 
-   fold=$1
-   wl_method=$2
-   ruletype=$3
-   pruneMethod=$4
+   local fold=$1
+   local wl_method=$2
+   local ruletype=$3
+   local pruneMethod=$4
    shift 4
 
    # Get the data
@@ -73,8 +73,8 @@ function getData() {
 }
 
 function runRulePruning() {
-   ruletype=$1
-   pruneMethod=$2
+   local ruletype=$1
+   local pruneMethod=$2
 
    # check if rule pruning for this iteration
    if [[ "${pruneMethod}" != "NotPrune" ]]; then
@@ -98,8 +98,8 @@ function runRulePruning() {
 }
 
 function runWeightLearning() {
-   modelPath=$1
-   wl_method=$2
+   local modelPath=$1
+   local wl_method=$2
 
    echo "Running PSL Weight Learning"
    echo "Weight Learning options: $3"
@@ -124,8 +124,8 @@ function runWeightLearning() {
 }
 
 function runEvaluation() {
-   ruletype=$1
-   wl_method=$2
+   local ruletype=$1
+   local wl_method=$2
 
    echo "Running PSL Inference"
    echo "Evaluation options: $3"
