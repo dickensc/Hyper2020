@@ -16,12 +16,12 @@ readonly ADDITIONAL_EVAL_OPTIONS='--infer --eval org.linqs.psl.evaluation.statis
 declare -A WEIGHT_LEARNING_METHODS
 WEIGHT_LEARNING_METHODS[uniform]=''
 WEIGHT_LEARNING_METHODS[gpp]='org.linqs.psl.application.learning.weight.bayesian.GaussianProcessPrior'
-WEIGHT_LEARNING_METHODS[MaxPiecewisePseudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood'
+WEIGHT_LEARNING_METHODS[maxPiecewisePseudoLikelihood]='org.linqs.psl.application.learning.weight.maxlikelihood.MaxPiecewisePseudoLikelihood'
 
 declare -A WEIGHT_LEARNING_METHOD_OPTIONS
 WEIGHT_LEARNING_METHOD_OPTIONS[uniform]=''
 WEIGHT_LEARNING_METHOD_OPTIONS[gpp]=''
-WEIGHT_LEARNING_METHOD_OPTIONS[MaxPiecewisePseudoLikelihood]='-D votedperceptron.stepsize=10 -D votedperceptron.numsteps=100'
+WEIGHT_LEARNING_METHOD_OPTIONS[maxPiecewisePseudoLikelihood]='-D votedperceptron.stepsize=10 -D votedperceptron.numsteps=100'
 
 readonly RULETYPES='-linear -orignal -quadratic'
 

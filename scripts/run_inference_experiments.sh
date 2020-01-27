@@ -10,7 +10,7 @@ readonly NUM_FOLDS=5
 readonly INFERENCE_METHODS='admm'
 
 #readonly WEIGHT_LEARNING_METHODS='gpp uniform'
-readonly WEIGHT_LEARNING_METHODS='MaxPiecewisePseudoLikelihood'
+readonly WEIGHT_LEARNING_METHODS='maxPiecewisePseudoLikelihood'
 #readonly RULETYPES='-linear -original -quadratic'
 readonly RULETYPES='-linear -quadratic'
 #readonly PRUNE='TakeTopPruning DropBottomPruning NotPrune'
