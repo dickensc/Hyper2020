@@ -85,7 +85,7 @@ function runRulePruning() {
      echo "Pruning Additional Options: $3"
 
      # Run MPPL Weight Learning
-     runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "MaxPiecewisePseudoLikelihood" "$3"
+     runWeightLearning "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}.psl" "maxPiecewisePseudoLikelihood" "$3"
 
      # Move / rename learned weights to ../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl
      mv "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-learned.psl" "../${BASE_NAME}${ruletype}/cli/${BASE_NAME}-mppl-learned.psl"
